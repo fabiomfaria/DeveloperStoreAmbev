@@ -1,30 +1,15 @@
-﻿using Ambev.DeveloperEvaluation.Common.Validation;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using FluentValidation;
+using Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSaleById;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSaleById
 {
-    public class GetSaleByIdValidator : Validator<GetSaleByIdQuery>
+    public class GetSaleByIdValidator : AbstractValidator<GetSaleByIdQuery>
     {
-        public override Task<ValidationResult> ValidateAsync(GetSaleByIdQuery instance)
+        public GetSaleByIdValidator()
         {
-            var errors = new List<ValidationErrorDetail>();
-
-            if (instance.SaleId == Guid.Empty)
-            {
-                errors.Add(new ValidationErrorDetail
-                {
-                    Field = nameof(instance.SaleId),
-                    Message = "Sale ID cannot be empty."
-                });
-            }
-
-            return Task.FromResult(new ValidationResult
-            {
-                IsValid = errors.Count == 0,
-                Errors = errors
-            });
+            RuleFor(x => x.SaleId)
+                .NotEmpty().WithMessage("Sale ID is required.")
+                .NotEqual(Guid.Empty).WithMessage("The sale ID cannot be an empty GUID.");
         }
     }
 }

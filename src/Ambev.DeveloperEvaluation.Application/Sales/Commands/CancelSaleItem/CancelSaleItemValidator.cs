@@ -1,39 +1,19 @@
-﻿using Ambev.DeveloperEvaluation.Common.Validation;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using FluentValidation;
+using Ambev.DeveloperEvaluation.Application.Sales.Commands.CancelSaleItem;
 
-namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CancelSaleItem
+namespace Ambev.DeveloperEvaluation.Domain.Validators
 {
-    public class CancelSaleItemValidator : Validator<CancelSaleItemCommand>
+    public class CancelSaleItemValidator : AbstractValidator<CancelSaleItemCommand>
     {
-        public override Task<ValidationResult> ValidateAsync(CancelSaleItemCommand instance)
+        public CancelSaleItemValidator()
         {
-            var errors = new List<ValidationErrorDetail>();
+            RuleFor(x => x.SaleId)
+                .NotEmpty().WithMessage("Sale ID is required.")
+                .NotEqual(Guid.Empty).WithMessage("The sale ID cannot be an empty GUID.");
 
-            if (instance.SaleId == Guid.Empty)
-            {
-                errors.Add(new ValidationErrorDetail
-                {
-                    Field = nameof(instance.SaleId),
-                    Message = "Sale ID cannot be empty."
-                });
-            }
-
-            if (instance.SaleItemId == Guid.Empty)
-            {
-                errors.Add(new ValidationErrorDetail
-                {
-                    Field = nameof(instance.SaleItemId),
-                    Message = "Sale Item ID cannot be empty."
-                });
-            }
-
-            return Task.FromResult(new ValidationResult
-            {
-                IsValid = errors.Count == 0,
-                Errors = errors
-            });
+            RuleFor(x => x.SaleItemId)
+                .NotEmpty().WithMessage("Item ID is required.")
+                .NotEqual(Guid.Empty).WithMessage("The item ID cannot be an empty GUID.");
         }
     }
 }

@@ -20,11 +20,8 @@ namespace Ambev.DeveloperEvaluation.Application.Services
             var eventName = @event.GetType().Name;
             var eventData = JsonSerializer.Serialize(@event);
 
-            _logger.LogInformation($"Event Published: {eventName}");
-            _logger.LogInformation($"Event Data: {eventData}");
-
-            // Aqui seria o ponto de integração com um Message Broker como RabbitMQ ou Kafka
-            // Implementação simplificada conforme solicitado nos requisitos
+            _logger.LogInformation("EVENT PUBLISHED: {EventName} at {Timestamp}", eventName, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
+            _logger.LogInformation("EVENT PAYLOAD: {EventData}", eventData);
 
             return Task.CompletedTask;
         }

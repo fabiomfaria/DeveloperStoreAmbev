@@ -25,8 +25,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CancelSaleItem
 
         public async Task<CancelSaleItemResult> Handle(CancelSaleItemCommand request, CancellationToken cancellationToken)
         {
-            // Retrieve the sale
-            var sale = await _saleRepository.GetByIdAsync(request.SaleId, cancellationToken);
+            var sale = await _saleRepository.GetByIdAsync(request.SaleId);
 
             if (sale == null)
             {
@@ -34,7 +33,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CancelSaleItem
             }
 
             // Check if the sale is already cancelled
-            if (sale.Cancelled)
+            if (sale.IsCancelled)
             {
                 throw new DomainException($"Cannot cancel item: Sale with ID {request.SaleId} is already cancelled.");
             }
@@ -48,7 +47,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CancelSaleItem
             }
 
             // Check if the item is already cancelled
-            if (item.Cancelled)
+            if (item.IsCancelled)
             {
                 throw new DomainException($"Item with ID {request.SaleItemId} is already cancelled.");
             }
@@ -56,20 +55,13 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CancelSaleItem
             // Cancel the item
             item.Cancel();
 
-            // Recalculate the sale total
-            sale.RecalculateTotal();
+            //sale.RecalculateTotal();
 
             // Update the sale in the repository
-            await _saleRepository.UpdateAsync(sale, cancellationToken);
+            await _saleRepository.UpdateAsync(sale);
 
             // Publish the ItemCancelled event
-            await _mediator.Publish(new ItemCancelledEvent
-            {
-                SaleId = sale.Id,
-                ItemId = item.Id,
-                ProductId = item.ProductId,
-                Quantity = item.Quantity
-            }, cancellationToken);
+            await _mediator.Publish(new ItemCancelledEvent(sale, item), cancellationToken);
 
             // Map and return the result
             return new CancelSaleItemResult
@@ -77,7 +69,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CancelSaleItem
                 SaleId = sale.Id,
                 SaleItemId = item.Id,
                 UpdatedSaleTotal = sale.TotalAmount,
-                Cancelled = item.Cancelled
+                Cancelled = item.IsCancelled
             };
         }
     }

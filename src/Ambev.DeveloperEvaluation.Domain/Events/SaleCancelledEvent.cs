@@ -9,11 +9,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Events
         public string SaleNumber { get; }
         public DateTime CancellationDate { get; }
 
-        public SaleCancelledEvent(Sale sale)
+        public SaleCancelledEvent(Guid saleId, string saleNumber)
         {
-            SaleId = sale.Id;
-            SaleNumber = sale.SaleNumber;
-            CancellationDate = DateTime.UtcNow;
+            SaleId = saleId;
+            SaleNumber = saleNumber;
         }
     }
 }
