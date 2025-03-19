@@ -1,26 +1,26 @@
 # Developer Evaluation Project - Sale API
 
-## Descrição do Projeto
+## Project Description
 
-Este projeto implementa uma API REST completa para gerenciamento de vendas seguindo os princípios de Domain-Driven Design (DDD). A aplicação fornece um CRUD completo para registros de vendas, incluindo informações como número da venda, data, cliente, valor total, filial, produtos, quantidades, preços unitários, descontos e status da venda.
+This project implements a complete REST API for sales management following Domain-Driven Design (DDD) principles. The application provides a full CRUD for sales records, including information such as sale number, date, customer, total value, branch, products, quantities, unit prices, discounts, and sale status.
 
-### Funcionalidades Principais
+### Main Features
 
-- Criação, leitura, atualização e exclusão de vendas
-- Aplicação automática de descontos baseados na quantidade de itens
-- Cancelamento de vendas completas ou itens específicos
-- Publicação de eventos de negócio (SaleCreated, SaleModified, SaleCancelled, ItemCancelled)
-- Validação de regras de negócio
-- Paginação, filtragem e ordenação nos endpoints de consulta
+- Creation, reading, updating, and deletion of sales
+- Automatic application of discounts based on item quantity
+- Cancellation of complete sales or specific items
+- Publication of business events (SaleCreated, SaleModified, SaleCancelled, ItemCancelled)
+- Business rules validation
+- Pagination, filtering, and sorting in query endpoints
 
-### Regras de Negócio
+### Business Rules
 
-- Compras acima de 4 itens idênticos têm 10% de desconto
-- Compras entre 10 e 20 itens idênticos têm 20% de desconto
-- Não é possível vender acima de 20 itens idênticos
-- Compras abaixo de 4 itens não podem ter desconto
+- Purchases above 4 identical items have a 10% discount
+- Purchases between 10 and 20 identical items have a 20% discount
+- It's not possible to sell more than 20 identical items
+- Purchases below 4 items cannot have a discount
 
-## Tecnologias Utilizadas
+## Technologies Used
 
 ### Backend
 - .NET 8.0
@@ -28,20 +28,20 @@ Este projeto implementa uma API REST completa para gerenciamento de vendas segui
 - Entity Framework Core
 - MediatR
 - AutoMapper
-- Rebus (para publicação de eventos)
+- Rebus (for event publishing)
 
-### Banco de Dados
-- PostgreSQL (dados relacionais)
-- MongoDB (logs e eventos)
+### Database
+- PostgreSQL (relational data)
+- MongoDB (logs and events)
 
-### Testes
+### Tests
 - xUnit
 - NSubstitute
 - Bogus (Faker)
 
-## Estrutura do Projeto
+## Project Structure
 
-O projeto segue uma arquitetura limpa (Clean Architecture) com separação clara entre as camadas:
+The project follows a Clean Architecture with clear separation between layers:
 
 ```
 src/
@@ -59,23 +59,23 @@ tests/
 └── Ambev.DeveloperEvaluation.Functional/ 
 ```
 
-## Como Executar o Projeto
+## How to Run the Project
 
-### Pré-requisitos
+### Prerequisites
 - .NET SDK 8.0
 - PostgreSQL
 - MongoDB
-- Docker (opcional)
+- Docker (optional)
 
-### Configuração Local
+### Local Configuration
 
-1. Clone o repositório:
+1. Clone the repository:
 ```
-git clone https://github.com/seu-usuario/ambev-developer-evaluation.git
+git clone https://github.com/your-username/ambev-developer-evaluation.git
 cd ambev-developer-evaluation
 ```
 
-2. Configure as strings de conexão no arquivo `appsettings.json`:
+2. Configure the connection strings in the `appsettings.json` file:
 ```json
 {
   "ConnectionStrings": {
@@ -85,55 +85,55 @@ cd ambev-developer-evaluation
 }
 ```
 
-3. Execute as migrações do banco de dados:
+3. Execute the database migrations:
 ```
 cd src/Ambev.DeveloperEvaluation.API
 dotnet ef database update
 ```
 
-4. Inicie a aplicação:
+4. Start the application:
 ```
 dotnet run
 ```
 
-A API estará disponível em `https://localhost:5001/swagger`
+The API will be available at `https://localhost:5001/swagger`
 
-### Utilizando Docker
+### Using Docker
 
-Alternativamente, você pode usar Docker para executar o projeto:
+Alternatively, you can use Docker to run the project:
 
 ```
 docker-compose up -d
 ```
 
-## Como Executar os Testes
+## How to Run the Tests
 
-Para executar todos os testes:
+To run all tests:
 ```
 dotnet test
 ```
 
-Para executar um tipo específico de testes:
+To run a specific type of tests:
 ```
 dotnet test tests/Ambev.DeveloperEvaluation.Unit
 dotnet test tests/Ambev.DeveloperEvaluation.Integration
 dotnet test tests/Ambev.DeveloperEvaluation.Functional
 ```
 
-## Endpoints da API
+## API Endpoints
 
-### Vendas
+### Sales
 
-- `GET /api/sales` - Obtém lista de vendas com paginação, filtro e ordenação
-- `GET /api/sales/{id}` - Obtém detalhes de uma venda específica
-- `POST /api/sales` - Cria uma nova venda
-- `PUT /api/sales/{id}` - Atualiza uma venda existente
-- `DELETE /api/sales/{id}` - Cancela uma venda
-- `DELETE /api/sales/{saleId}/items/{itemId}` - Cancela um item específico da venda
+- `GET /api/sales` - Gets list of sales with pagination, filtering, and sorting
+- `GET /api/sales/{id}` - Gets details of a specific sale
+- `POST /api/sales` - Creates a new sale
+- `PUT /api/sales/{id}` - Updates an existing sale
+- `DELETE /api/sales/{id}` - Cancels a sale
+- `DELETE /api/sales/{saleId}/items/{itemId}` - Cancels a specific item from a sale
 
-## Padrões de Desenvolvimento
+## Development Standards
 
-Este projeto segue padrões e práticas como:
+This project follows patterns and practices such as:
 
 - DDD (Domain-Driven Design)
 - CQRS (Command Query Responsibility Segregation)
@@ -141,5 +141,5 @@ Este projeto segue padrões e práticas como:
 - Mediator Pattern
 - Unit of Work
 - Clean Architecture
-- GitFlow para controle de versão
-- Commits semânticos
+- GitFlow for version control
+- Semantic commits
