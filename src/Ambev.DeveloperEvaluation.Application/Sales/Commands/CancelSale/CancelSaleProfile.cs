@@ -8,10 +8,10 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Commands.CancelSale
         public CancelSaleProfile()
         {
             CreateMap<Sale, CancelSaleResult>()
-                .ForMember(dest => dest.SaleId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.SaleDate, opt => opt.MapFrom(src => src.SaleDate))
-                .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
-                .ForMember(dest => dest.Cancelled, opt => opt.MapFrom(src => src.Cancelled));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.SaleNumber, opt => opt.MapFrom(src => src.SaleNumber))
+                .ForMember(dest => dest.IsCancelled, opt => opt.MapFrom(src => src.IsCancelled))
+                .ForMember(dest => dest.CancellationDate, opt => opt.MapFrom(src => src.Date));
         }
     }
 }

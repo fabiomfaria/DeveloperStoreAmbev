@@ -20,20 +20,24 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSales
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        // Replace all occurrences of 'SaleDate' with 'Date' in the Handle method
         public async Task<GetSalesResult> Handle(GetSalesQuery request, CancellationToken cancellationToken)
         {
+            // Get all sales
+            var sales = await _saleRepository.GetAllAsync();
+
             // Apply filters
-            var salesQuery = _saleRepository.GetQueryable();
+            var salesQuery = sales.AsQueryable();
 
             // Filter by date range
             if (request.StartDate.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.SaleDate >= request.StartDate.Value);
+                salesQuery = salesQuery.Where(s => s.Date >= request.StartDate.Value);
             }
 
             if (request.EndDate.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.SaleDate <= request.EndDate.Value);
+                salesQuery = salesQuery.Where(s => s.Date <= request.EndDate.Value);
             }
 
             // Filter by customer
@@ -54,30 +58,29 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSales
                 bool includeCancelled = request.IncludeCancelled.Value;
                 if (!includeCancelled)
                 {
-                    salesQuery = salesQuery.Where(s => !s.Cancelled);
+                    salesQuery = salesQuery.Where(s => !s.IsCancelled);
                 }
             }
             else
             {
                 // Default: exclude cancelled
-                salesQuery = salesQuery.Where(s => !s.Cancelled);
+                salesQuery = salesQuery.Where(s => !s.IsCancelled);
             }
 
             // Order by date descending
-            salesQuery = salesQuery.OrderByDescending(s => s.SaleDate);
+            salesQuery = salesQuery.OrderByDescending(s => s.Date);
 
             // Get total count
-            int totalCount = await _saleRepository.CountAsync(salesQuery, cancellationToken);
+            int totalCount = salesQuery.Count();
 
             // Apply pagination
             var pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
             var pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;
 
-            var pagedSales = await _saleRepository.GetPagedAsync(
-                salesQuery,
-                pageNumber,
-                pageSize,
-                cancellationToken);
+            var pagedSales = salesQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             // Map to DTOs
             var salesDtos = _mapper.Map<List<SaleSummaryDto>>(pagedSales);
