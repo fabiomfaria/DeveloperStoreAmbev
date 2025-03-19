@@ -11,8 +11,13 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />    
-    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="MediatR" Version="12.4.1" />    
+    <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.3.0" />
     <PackageReference Include="OneOf" Version="3.0.271" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Sales\Commands\CreateSaleItem\" />
   </ItemGroup>
 
 </Project>

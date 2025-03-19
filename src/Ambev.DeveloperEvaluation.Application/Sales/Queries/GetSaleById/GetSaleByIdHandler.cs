@@ -21,7 +21,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSaleById
 
         public async Task<GetSaleByIdResult> Handle(GetSaleByIdQuery request, CancellationToken cancellationToken)
         {
-            var sale = await _saleRepository.GetByIdAsync(request.SaleId, cancellationToken);
+            var sale = await _saleRepository.GetByIdAsync(request.SaleId);
 
             if (sale == null)
             {

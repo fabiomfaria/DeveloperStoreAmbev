@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Ambev.DeveloperEvaluation.Application.Sales.Commands.CreateSaleItem;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 {
@@ -40,7 +42,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             var result = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<GetSalesResponse>(result);
-            return Ok(new ApiResponseWithData<GetSalesResponse>(response));
+            return Ok(new ApiResponseWithData<GetSalesResponse> { Data = response });
         }
 
         [HttpGet("{id}")]
@@ -50,7 +52,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             var result = await _mediator.Send(query, cancellationToken);
 
             var response = _mapper.Map<GetSaleByIdResponse>(result);
-            return Ok(new ApiResponseWithData<GetSaleByIdResponse>(response));
+            return Ok(new ApiResponseWithData<GetSaleByIdResponse> { Data = response });
         }
 
         [HttpPost]
@@ -60,7 +62,19 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             var result = await _mediator.Send(command, cancellationToken);
 
             var response = _mapper.Map<CreateSaleResponse>(result);
-            return CreatedAtAction(nameof(GetSaleById), new { id = response.SaleId }, new ApiResponseWithData<CreateSaleResponse>(response));
+            return CreatedAtAction(nameof(GetSaleById), new { id = response.SaleId }, new ApiResponseWithData<CreateSaleResponse> { Data = response });
+        }
+
+        [HttpPost("{saleId}/items")]
+        public async Task<IActionResult> CreateSaleItem(Guid saleId, [FromBody] CreateSaleItemRequest request, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<CreateSaleItemCommand>(request);
+            command.SaleId = saleId;
+
+            var result = await _mediator.Send(command, cancellationToken);
+
+            var response = _mapper.Map<CreateSaleItemResponse>(result);
+            return CreatedAtAction(nameof(GetSaleById), new { id = saleId }, new ApiResponseWithData<CreateSaleItemResponse> { Data = response });
         }
 
         [HttpPut("{id}")]
@@ -68,24 +82,28 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         {
             if (id != request.SaleId)
             {
-                return BadRequest(new ApiResponse("Sale ID in URL does not match the one in request body.", false));
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Sale ID in URL does not match the one in request body."
+                });
             }
 
             var command = _mapper.Map<UpdateSaleCommand>(request);
             var result = await _mediator.Send(command, cancellationToken);
 
             var response = _mapper.Map<UpdateSaleResponse>(result);
-            return Ok(new ApiResponseWithData<UpdateSaleResponse>(response));
+            return Ok(new ApiResponseWithData<UpdateSaleResponse> { Data = response });
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> CancelSale(Guid id, CancellationToken cancellationToken)
         {
-            var command = new CancelSaleCommand { SaleId = id };
+            var command = new CancelSaleCommand { Id = id };
             var result = await _mediator.Send(command, cancellationToken);
 
             var response = _mapper.Map<CancelSaleResponse>(result);
-            return Ok(new ApiResponseWithData<CancelSaleResponse>(response));
+            return Ok(new ApiResponseWithData<CancelSaleResponse> { Data = response });
         }
 
         [HttpDelete("{saleId}/items/{itemId}")]
@@ -95,7 +113,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             var result = await _mediator.Send(command, cancellationToken);
 
             var response = _mapper.Map<CancelSaleItemResponse>(result);
-            return Ok(new ApiResponseWithData<CancelSaleItemResponse>(response));
+            return Ok(new ApiResponseWithData<CancelSaleItemResponse> { Data = response });
         }
     }
 }

@@ -1,38 +1,18 @@
-﻿using Ambev.DeveloperEvaluation.Common.Validation;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using FluentValidation;
+using Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSales;
 
 namespace Ambev.DeveloperEvaluation.Application.Sales.Queries.GetSales
 {
-    public class GetSalesValidator : Validator<GetSalesQuery>
+    public class GetSalesValidator : AbstractValidator<GetSalesQuery>
     {
-        public override Task<ValidationResult> ValidateAsync(GetSalesQuery instance)
+        public GetSalesValidator()
         {
-            var errors = new List<ValidationErrorDetail>();
+            RuleFor(x => x.PageSize)
+                .LessThanOrEqualTo(100).WithMessage("Page size cannot exceed 100.");
 
-            if (instance.PageSize > 100)
-            {
-                errors.Add(new ValidationErrorDetail
-                {
-                    Field = nameof(instance.PageSize),
-                    Message = "Page size cannot exceed 100."
-                });
-            }
-
-            if (instance.StartDate.HasValue && instance.EndDate.HasValue && instance.StartDate > instance.EndDate)
-            {
-                errors.Add(new ValidationErrorDetail
-                {
-                    Field = nameof(instance.StartDate),
-                    Message = "Start date cannot be after end date."
-                });
-            }
-
-            return Task.FromResult(new ValidationResult
-            {
-                IsValid = errors.Count == 0,
-                Errors = errors
-            });
+            RuleFor(x => x)
+                .Must(x => !x.StartDate.HasValue || !x.EndDate.HasValue || x.StartDate <= x.EndDate)
+                .WithMessage("The start date cannot be later than the end date.");
         }
     }
 }
